@@ -22,15 +22,39 @@ def split_by_app(data):
 
 
 def get_battery_device():
-    """Find the first available battery device in /sys/class/power_supply/"""
+    """Find the main battery device in /sys/class/power_supply/."""
     power_supply_path = "/sys/class/power_supply/"
+    candidates = []
     for device in os.listdir(power_supply_path):
         device_path = os.path.join(power_supply_path, device)
-        if os.path.isdir(device_path):
-            # Check if it's a battery by looking for capacity file
-            capacity_file = os.path.join(device_path, "capacity")
-            if os.path.exists(capacity_file):
-                return device
+        if not os.path.isdir(device_path):
+            continue
+
+        capacity_file = os.path.join(device_path, "capacity")
+        status_file = os.path.join(device_path, "status")
+        power_now_file = os.path.join(device_path, "power_now")
+        voltage_now_file = os.path.join(device_path, "voltage_now")
+        current_now_file = os.path.join(device_path, "current_now")
+
+        if not os.path.exists(capacity_file) or not os.path.exists(status_file):
+            continue
+        if not (
+            os.path.exists(power_now_file)
+            or (
+                os.path.exists(voltage_now_file)
+                and os.path.exists(current_now_file)
+            )
+        ):
+            continue
+
+        candidates.append(device)
+
+    # Prefer BAT*/BATT entries so handheld controller batteries do not win device selection.
+    preferred = [device for device in candidates if device.upper().startswith("BAT")]
+    if preferred:
+        return sorted(preferred)[0]
+    if candidates:
+        return sorted(candidates)[0]
     return None
 
 
@@ -107,22 +131,31 @@ class Plugin:
 
     async def recorder(self):
         power_supply_path = f"/sys/class/power_supply/{self.battery_device}/"
-        volt_file = open(os.path.join(power_supply_path, "voltage_now"))
-        curr_file = open(os.path.join(power_supply_path, "current_now"))
         cap_file = open(os.path.join(power_supply_path, "capacity"))
         status = open(os.path.join(power_supply_path, "status"))
+        power_now_path = os.path.join(power_supply_path, "power_now")
+        volt_file = None
+        curr_file = None
+        power_now_file = None
+        # Legion Go exposes power_now on the main battery instead of voltage/current.
+        if os.path.exists(power_now_path):
+            power_now_file = open(power_now_path)
+        else:
+            volt_file = open(os.path.join(power_supply_path, "voltage_now"))
+            curr_file = open(os.path.join(power_supply_path, "current_now"))
         logger = decky_plugin.logger
 
         logger.info(f"recorder started using battery device {self.battery_device}")
         running_list = []
         while True:
             try:
-                volt_file.seek(0)
-                curr_file.seek(0)
+                if power_now_file is not None:
+                    power_now_file.seek(0)
+                else:
+                    volt_file.seek(0)
+                    curr_file.seek(0)
                 cap_file.seek(0)
                 status.seek(0)
-                volt = int(volt_file.read().strip())
-                curr = int(curr_file.read().strip())
                 cap = int(cap_file.read().strip())
                 stat = status.read().strip()
                 if stat == "Discharging":
@@ -132,7 +165,12 @@ class Plugin:
                 else:
                     stat = 0
 
-                power = int(volt * curr * 10.0**-11)
+                if power_now_file is not None:
+                    power = int(int(power_now_file.read().strip()) / 100000)
+                else:
+                    volt = int(volt_file.read().strip())
+                    curr = int(curr_file.read().strip())
+                    power = int(volt * curr * 10.0**-11)
                 curr_time = int(time.time())
                 running_list.append((curr_time, cap, stat, power, self.app))
                 if len(running_list) > 10:

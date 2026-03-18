@@ -1,6 +1,6 @@
 {
   "name": "steam-deck-battery-tracker",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Plugin to track battery history and power",
   "scripts": {
     "build": "shx rm -rf dist && rollup -c",

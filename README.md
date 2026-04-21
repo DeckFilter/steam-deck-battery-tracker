@@ -1,3 +1,7 @@
+[![](https://img.shields.io/github/downloads/DeckFilter/steam-deck-battery-tracker/total.svg)](https://github.com/DeckFilter/steam-deck-battery-tracker/releases)
+[![](https://img.shields.io/github/downloads/DeckFilter/steam-deck-battery-tracker/latest/total)](https://github.com/DeckFilter/steam-deck-battery-tracker/releases/latest)
+[![](https://img.shields.io/github/v/release/DeckFilter/steam-deck-battery-tracker)](https://github.com/DeckFilter/steam-deck-battery-tracker/releases/latest)
+
 # Steam Deck Battery Tracker
 
 Simple plugin to track battery history for your Steam Deck as well as power stats.

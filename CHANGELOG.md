@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.3.2] - 2026-10-20
+
+
+### Fixes
+
+- Remove redundant description by @felixhirschfeld
+- Use layout below by @felixhirschfeld
+
+
+
+### Documentation
+
+- Update README by @felixhirschfeld
+- Add historical changelog and preserve release entries by @felixhirschfeld
+
+
+
+### Maintenance
+
+- Dependabot.yml by @felixhirschfeld
+- Migrate to the current Decky plugin template by @felixhirschfeld
+- Update repository urls by @felixhirschfeld
+- Add manual release version selection by @felixhirschfeld
+- Generate release notes and changelog by @felixhirschfeld
+
+
 ## [0.3.1](https://github.com/DeckFilter/steam-deck-battery-tracker/releases/tag/v0.3.1) - 2026-04-08
 
 ### Features

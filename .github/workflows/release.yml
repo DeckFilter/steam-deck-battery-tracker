@@ -68,16 +68,15 @@ jobs:
           OUTPUT: CHANGES.md
           GITHUB_REPO: ${{ github.repository }}
 
-      - name: Generate full changelog
-        uses: orhun/git-cliff-action@a9a95522b26fe6403f7bb24031f21fb573d0f5ff # v4
-        with:
-          version: v2.14.2
-          config: cliff.toml
-          args: --use-branch-tags --tag ${{ steps.version.outputs.tag }}
-          github_token: ${{ github.token }}
+      - name: Update changelog
         env:
-          OUTPUT: CHANGELOG.md
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          GITHUB_TOKEN: ${{ github.token }}
           GITHUB_REPO: ${{ github.repository }}
+        run: |
+          "$RUNNER_TEMP/git-cliff/bin/git-cliff" \
+            --config cliff.toml --use-branch-tags --unreleased \
+            --tag "$RELEASE_TAG" --prepend CHANGELOG.md
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

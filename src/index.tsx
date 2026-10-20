@@ -85,7 +85,6 @@ const Content: VFC<{ serverAPI: ServerAPI; startData: any }> = ({ serverAPI }) =
       <PanelSectionRow>
         <SliderField
           label="Lookback in days"
-          description="Lookback in days"
           value={lookback || 1}
           step={1}
           max={7}

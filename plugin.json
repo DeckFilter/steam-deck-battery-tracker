@@ -2,9 +2,10 @@
   "name": "Battery Tracker",
   "author": "Jariullah Safi",
   "flags": ["_root"],
+  "api_version": 1,
   "publish": {
     "tags": ["template", "root"],
     "description": "Battery tracker plugin",
-    "image": "https://raw.githubusercontent.com/safijari/steam-deck-battery-tracker/main/example.png"
+    "image": "https://raw.githubusercontent.com/DeckFilter/steam-deck-battery-tracker/main/example.png"
   }
 }

@@ -1,23 +1,40 @@
-import { definePlugin, PanelSection, PanelSectionRow, Router, ServerAPI, staticClasses, SliderField, Field } from 'decky-frontend-lib'
-import { VFC, useState } from 'react'
-import { FaBatteryFull, FaShip } from 'react-icons/fa'
+import { callable, definePlugin } from '@decky/api'
+import { PanelSection, PanelSectionRow, Router, staticClasses, SliderField, Field } from '@decky/ui'
+import { useState } from 'react'
+import { FaBatteryFull } from 'react-icons/fa'
 
 import { Canvas } from './canvas'
 
-const Content: VFC<{ serverAPI: ServerAPI; startData: any }> = ({ serverAPI }) => {
-  const [lookback, setLookback] = useState<number | undefined>(1)
-  const [leData, setData] = useState<any>(null)
+interface BatteryData {
+  x: number[]
+  cap: number[]
+  power_data: { name: string; average_power: number }[]
+}
 
-  const drawCanvas = async (ctx: any, frameCount: number) => {
+const getRecentData = callable<[lookback: number], BatteryData | null>('get_recent_data')
+const setApp = callable<[app: string], boolean>('set_app')
+
+const Content = () => {
+  const [lookback, setLookback] = useState(1)
+  const [leData, setData] = useState<BatteryData | null>(null)
+
+  const drawCanvas = async (ctx: CanvasRenderingContext2D, frameCount: number) => {
     if (frameCount % 1000 > 1) {
       return
     }
-    if (leData == null) {
-      var data = (await serverAPI.callPluginMethod('get_recent_data', { lookback: lookback })).result
-      console.log('Got first time data', data)
-      setData(data)
-    } else {
-      var data = leData
+    let data = leData
+    if (data == null) {
+      try {
+        data = await getRecentData(lookback)
+        console.log('Got first time data', data)
+        setData(data)
+      } catch (error) {
+        console.error('Could not get recent battery data', error)
+        return
+      }
+    }
+    if (data == null) {
+      return
     }
 
     console.log('in draw canvas ', leData)
@@ -93,8 +110,8 @@ const Content: VFC<{ serverAPI: ServerAPI; startData: any }> = ({ serverAPI }) =
           showValue={true}
           onChange={(value: number) => {
             setLookback(value)
-            serverAPI.callPluginMethod('get_recent_data', { lookback: value }).then((val) => {
-              setData(val.result)
+            getRecentData(value).then(setData).catch((error) => {
+              console.error('Could not get recent battery data', error)
             })
           }}
         />
@@ -102,7 +119,7 @@ const Content: VFC<{ serverAPI: ServerAPI; startData: any }> = ({ serverAPI }) =
       <PanelSectionRow>
         <Field focusable disabled>
           <Canvas
-            draw={(ctx: any, frameCount: number) => drawCanvas(ctx, frameCount)}
+            draw={(ctx: CanvasRenderingContext2D, frameCount: number) => drawCanvas(ctx, frameCount)}
             width={268}
             height={200}
             style={{
@@ -118,7 +135,7 @@ const Content: VFC<{ serverAPI: ServerAPI; startData: any }> = ({ serverAPI }) =
         </Field>
       </PanelSectionRow>
 
-      {leData?.power_data.map((item: any) => (
+      {leData?.power_data.map((item) => (
         <PanelSectionRow key={item.name}>
           <Field focusable disabled label={item.name}>
             {item.average_power}W
@@ -129,23 +146,23 @@ const Content: VFC<{ serverAPI: ServerAPI; startData: any }> = ({ serverAPI }) =
   )
 }
 
-export default definePlugin((serverApi: ServerAPI) => {
+export default definePlugin(() => {
   console.log('defining battery plugin')
-  var app = Router.MainRunningApp?.display_name
-  serverApi.callPluginMethod('set_app', { app: app }).then((val) => {})
-
-  setInterval(() => {
-    var app_now = Router.MainRunningApp?.display_name
-    serverApi.callPluginMethod('set_app', { app: app_now }).then((val) => {})
-    app = app_now
-  }, 1000 * 10)
+  const updateApp = () => {
+    setApp(Router.MainRunningApp?.display_name ?? 'Unknown').catch((error) => {
+      console.error('Could not update the running app', error)
+    })
+  }
+  updateApp()
+  const appInterval = window.setInterval(updateApp, 1000 * 10)
 
   return {
-    title: <div className={staticClasses.Title}>Example Plugin</div>,
-    content: <Content serverAPI={serverApi} />,
+    name: 'Battery Tracker',
+    titleView: <div className={staticClasses.Title}>Battery Tracker</div>,
+    content: <Content />,
     icon: <FaBatteryFull />,
     onDismount() {
-      serverApi.routerHook.removeRoute('/decky-plugin-test')
+      window.clearInterval(appInterval)
     },
   }
 })

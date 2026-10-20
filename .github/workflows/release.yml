@@ -5,16 +5,38 @@ permissions:
 
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - "v*.*.*"
+    inputs:
+      release_type:
+        description: Version bump
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 jobs:
   build_plugin:
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
     steps:
+      - name: Require the default branch
+        if: github.ref != format('refs/heads/{0}', github.event.repository.default_branch)
+        run: |
+          echo "::error::Run Release from the default branch."
+          exit 1
+
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -26,6 +48,14 @@ jobs:
         with:
           node-version: "22"
           cache: "pnpm"
+
+      - name: Bump version
+        id: version
+        env:
+          VERSION_BUMP: ${{ inputs.release_type }}
+        run: |
+          tag=$(npm version "$VERSION_BUMP" --no-git-tag-version --ignore-scripts --package-lock=false)
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -72,8 +102,19 @@ jobs:
             steam-deck-battery-tracker.tar.gz
             steam-deck-battery-tracker.zip
 
+      - name: Commit and tag the release
+        env:
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          RELEASE_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore(release): $RELEASE_TAG"
+          git tag "$RELEASE_TAG"
+          git push --atomic origin "HEAD:refs/heads/$RELEASE_BRANCH" "refs/tags/$RELEASE_TAG"
+
   publish:
-    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     needs: build_plugin
     steps:
@@ -92,9 +133,8 @@ jobs:
           files: |
             /tmp/artifacts/steam-deck-battery-tracker/steam-deck-battery-tracker.tar.gz
             /tmp/artifacts/steam-deck-battery-tracker/steam-deck-battery-tracker.zip
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ needs.build_plugin.outputs.tag }}
           draft: false
           generate_release_notes: true
-          prerelease: contains(github.ref, 'pre') || contains(github.ref, '.rc')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -117,7 +117,7 @@ const Content = () => {
         />
       </PanelSectionRow>
       <PanelSectionRow>
-        <Field focusable disabled>
+        <Field focusable disabled childrenLayout="below">
           <Canvas
             draw={(ctx: CanvasRenderingContext2D, frameCount: number) => drawCanvas(ctx, frameCount)}
             width={268}

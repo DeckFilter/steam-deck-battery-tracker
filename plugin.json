@@ -2,6 +2,7 @@
   "name": "Battery Tracker",
   "author": "Jariullah Safi",
   "flags": ["_root"],
+  "api_version": 1,
   "publish": {
     "tags": ["template", "root"],
     "description": "Battery tracker plugin",

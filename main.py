@@ -1,6 +1,6 @@
 import os
 import time
-import decky_plugin
+import decky
 import asyncio
 from pathlib import Path
 import sqlite3
@@ -62,8 +62,8 @@ class Plugin:
     async def _main(self):
         try:
             self.app = "Unknown"
-            decky_plugin.logger.info("steam deck battery logger _main")
-            battery_db = Path(decky_plugin.DECKY_PLUGIN_RUNTIME_DIR) / "battery.db"
+            decky.logger.info("steam deck battery logger _main")
+            battery_db = Path(decky.DECKY_PLUGIN_RUNTIME_DIR) / "battery.db"
             database_file = str(battery_db)
             self.con = sqlite3.connect(database_file)
             self.cursor = self.con.cursor()
@@ -71,7 +71,7 @@ class Plugin:
                 "select name from sqlite_master where type='table';"
             ).fetchall()
             if not tables:
-                decky_plugin.logger.info("Creating database table for the first time")
+                decky.logger.info("Creating database table for the first time")
                 self.cursor.execute(
                     "create table battery (time __integer, capacity __integer, status __integer, power __integer, app __text);"
                 )
@@ -84,23 +84,23 @@ class Plugin:
 
             loop = asyncio.get_event_loop()
             self._recorder_task = loop.create_task(Plugin.recorder(self))
-            decky_plugin.logger.info("steam deck battery logger _main finished")
+            decky.logger.info("steam deck battery logger _main finished")
         except Exception:
-            decky_plugin.logger.exception("_main")
+            decky.logger.exception("_main")
 
     async def _unload(self):
-        decky_plugin.logger.info("steam deck battery logger _unload")
+        decky.logger.info("steam deck battery logger _unload")
         pass
 
     async def set_app(self, app: str = "Unknown"):
-        decky_plugin.logger.info(f"Getting app as {app}")
+        decky.logger.info(f"Getting app as {app}")
         if app:
             self.app = app
         return True
 
     async def get_recent_data(self, lookback=2):
         try:
-            decky_plugin.logger.info(f"lookback {lookback}")
+            decky.logger.info(f"lookback {lookback}")
             end_time = time.time()
             start_time = end_time - 24 * lookback * 3600
             data = self.cursor.execute(
@@ -127,7 +127,7 @@ class Plugin:
                 "power_data": sorted(per_app_data, key=lambda x: -x["average_power"]),
             }
         except Exception:
-            decky_plugin.logger.exception("could not get recent data")
+            decky.logger.exception("could not get recent data")
 
     async def recorder(self):
         power_supply_path = f"/sys/class/power_supply/{self.battery_device}/"
@@ -143,7 +143,7 @@ class Plugin:
         else:
             volt_file = open(os.path.join(power_supply_path, "voltage_now"))
             curr_file = open(os.path.join(power_supply_path, "current_now"))
-        logger = decky_plugin.logger
+        logger = decky.logger
 
         logger.info(f"recorder started using battery device {self.battery_device}")
         running_list = []

@@ -1,38 +1,22 @@
-import commonjs from '@rollup/plugin-commonjs';
-import json from '@rollup/plugin-json';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import replace from '@rollup/plugin-replace';
+import deckyPlugin from '@decky/rollup';
 import typescript from '@rollup/plugin-typescript';
-import { defineConfig } from 'rollup';
-import importAssets from 'rollup-plugin-import-assets';
+import ts from 'typescript';
 
-import { name } from "./plugin.json";
-
-export default defineConfig({
-  input: './src/index.tsx',
-  plugins: [
-    commonjs(),
-    nodeResolve(),
-    typescript(),
-    json(),
-    replace({
-      preventAssignment: false,
-      'process.env.NODE_ENV': JSON.stringify('production'),
-    }),
-    importAssets({
-      publicPath: `http://127.0.0.1:1337/plugins/${name}/`
-    })
-  ],
-  context: 'window',
-  external: ["react", "react-dom", "decky-frontend-lib"],
-  output: {
-    file: "dist/index.js",
-    globals: {
-      react: "SP_REACT",
-      "react-dom": "SP_REACTDOM",
-      "decky-frontend-lib": "DFL"
-    },
-    format: 'iife',
-    exports: 'default',
+const compiler = {
+  ...ts,
+  createWatchCompilerHost(...args) {
+    const host = ts.createWatchCompilerHost(...args);
+    // One-shot builds must not leave TypeScript filesystem watchers running.
+    if (process.env.ROLLUP_WATCH !== 'true') {
+      host.watchFile = host.watchDirectory = () => ({ close() {} });
+    }
+    return host;
   },
-});
+};
+
+const config = deckyPlugin({});
+config.plugins = config.plugins.map((plugin) =>
+  plugin.name === 'typescript' ? typescript({ typescript: compiler }) : plugin
+);
+
+export default config;

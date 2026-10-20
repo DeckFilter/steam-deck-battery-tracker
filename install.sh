@@ -3,7 +3,7 @@
 set -euo pipefail
 
 PACKAGE="steam-deck-battery-tracker"
-RELEASE_URL="https://github.com/felixhirschfeld/${PACKAGE}/releases/latest/download/${PACKAGE}.tar.gz"
+RELEASE_URL="https://github.com/DeckFilter/${PACKAGE}/releases/latest/download/${PACKAGE}.tar.gz"
 
 if [[ "${EUID}" -eq 0 ]]; then
   echo "Please run this script as your normal user, not root."

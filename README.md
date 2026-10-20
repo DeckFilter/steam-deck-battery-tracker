@@ -15,7 +15,7 @@ This project is forked from [safijari/steam-deck-battery-tracker](https://github
 Run the following in terminal:
 
 ```bash
-curl -L https://raw.githubusercontent.com/felixhirschfeld/steam-deck-battery-tracker/main/install.sh | sh
+curl -L https://raw.githubusercontent.com/DeckFilter/steam-deck-battery-tracker/main/install.sh | sh
 ```
 
 This installs the latest release and restarts Decky automatically.
@@ -27,4 +27,3 @@ This installs the latest release and restarts Decky automatically.
 - Steam Deck
 - ROG Ally
 - Zotac Zone
-

@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/safijari/steam-deck-battery-tracker.git"
+    "url": "git+https://github.com/DeckFilter/steam-deck-battery-tracker.git"
   },
   "keywords": [
     "decky",
@@ -23,9 +23,9 @@
   "author": "Jariullah Safi",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/safijari/steam-deck-battery-tracker/issues"
+    "url": "https://github.com/DeckFilter/steam-deck-battery-tracker/issues"
   },
-  "homepage": "https://github.com/safijari/steam-deck-battery-tracker#readme",
+  "homepage": "https://github.com/DeckFilter/steam-deck-battery-tracker#readme",
   "devDependencies": {
     "@decky/rollup": "^1.0.2",
     "@decky/ui": "^4.15.1",

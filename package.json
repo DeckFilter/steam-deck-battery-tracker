@@ -28,7 +28,7 @@
   "homepage": "https://github.com/DeckFilter/steam-deck-battery-tracker#readme",
   "devDependencies": {
     "@decky/rollup": "^1.0.2",
-    "@decky/ui": "^4.15.1",
+    "@decky/ui": "^4.16.0",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",

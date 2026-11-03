@@ -1,5 +1,5 @@
 import { callable, definePlugin } from '@decky/api'
-import { PanelSection, PanelSectionRow, Router, staticClasses, SliderField, Field } from '@decky/ui'
+import { PanelSection, PanelSectionRow, Router, SliderField, Field } from '@decky/ui'
 import { useState } from 'react'
 import { FaBatteryFull } from 'react-icons/fa'
 
@@ -158,7 +158,7 @@ export default definePlugin(() => {
 
   return {
     name: 'Battery Tracker',
-    titleView: <div className={staticClasses.Title}>Battery Tracker</div>,
+    titleView: <div>Battery Tracker</div>,
     content: <Content />,
     icon: <FaBatteryFull />,
     onDismount() {

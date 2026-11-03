@@ -158,7 +158,6 @@ export default definePlugin(() => {
 
   return {
     name: 'Battery Tracker',
-    titleView: <div>Battery Tracker</div>,
     content: <Content />,
     icon: <FaBatteryFull />,
     onDismount() {

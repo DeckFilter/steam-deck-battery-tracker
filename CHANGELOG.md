@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.3] - 2026-11-03
+
+
+### Fixes
+
+- Remove obsolute titleView by @felixhirschfeld
+- Remove for real this time by @felixhirschfeld
+
+
 ## [0.3.2] - 2026-10-20
 
 

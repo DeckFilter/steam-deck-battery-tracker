@@ -72,7 +72,7 @@ const Content = () => {
     ctx.fillText('Time', width / 2, height - 4)
     // graph data labels
     ctx.textAlign = 'start' // default
-    ctx.fillText('-2d', 2, height - 2)
+    ctx.fillText(`-${lookback}d`, 2, height - 2)
     ctx.fillText('100%', 2, 9)
     ctx.textAlign = 'right'
     ctx.fillText('Now', width - 2, height - 2)

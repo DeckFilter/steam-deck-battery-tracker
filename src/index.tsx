@@ -1,5 +1,5 @@
 import { callable, definePlugin } from '@decky/api'
-import { PanelSection, PanelSectionRow, Router, staticClasses, SliderField, Field } from '@decky/ui'
+import { PanelSection, PanelSectionRow, Router, SliderField, Field } from '@decky/ui'
 import { useState } from 'react'
 import { FaBatteryFull } from 'react-icons/fa'
 
@@ -50,7 +50,7 @@ const Content = () => {
     // graph helper lines
     ctx.beginPath()
     ctx.strokeStyle = '#093455'
-    const totalLines = 7
+    const totalLines = 9
     const lineDistance = 1 / (totalLines + 1)
     for (let i = 1; i <= totalLines; i++) {
       ctx.moveTo(lineDistance * i * width, 0)
@@ -72,7 +72,7 @@ const Content = () => {
     ctx.fillText('Time', width / 2, height - 4)
     // graph data labels
     ctx.textAlign = 'start' // default
-    ctx.fillText('-2d', 2, height - 2)
+    ctx.fillText(`-${lookback}d`, 2, height - 2)
     ctx.fillText('100%', 2, 9)
     ctx.textAlign = 'right'
     ctx.fillText('Now', width - 2, height - 2)
@@ -117,7 +117,7 @@ const Content = () => {
         />
       </PanelSectionRow>
       <PanelSectionRow>
-        <Field focusable disabled>
+        <Field focusable disabled childrenLayout="below">
           <Canvas
             draw={(ctx: CanvasRenderingContext2D, frameCount: number) => drawCanvas(ctx, frameCount)}
             width={268}
@@ -158,7 +158,6 @@ export default definePlugin(() => {
 
   return {
     name: 'Battery Tracker',
-    titleView: <div className={staticClasses.Title}>Battery Tracker</div>,
     content: <Content />,
     icon: <FaBatteryFull />,
     onDismount() {

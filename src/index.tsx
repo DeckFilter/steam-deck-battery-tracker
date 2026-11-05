@@ -50,7 +50,7 @@ const Content = () => {
     // graph helper lines
     ctx.beginPath()
     ctx.strokeStyle = '#093455'
-    const totalLines = 7
+    const totalLines = 9
     const lineDistance = 1 / (totalLines + 1)
     for (let i = 1; i <= totalLines; i++) {
       ctx.moveTo(lineDistance * i * width, 0)

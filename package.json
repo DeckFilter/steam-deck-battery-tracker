@@ -1,6 +1,6 @@
 {
   "name": "steam-deck-battery-tracker",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Plugin to track battery history and power",
   "type": "module",
   "scripts": {
@@ -20,7 +20,7 @@
     "steam-deck",
     "deck"
   ],
-  "author": "Jariullah Safi",
+  "author": "DeckFilter, Jariullah Safi",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/DeckFilter/steam-deck-battery-tracker/issues"

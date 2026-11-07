@@ -10,7 +10,7 @@ This project is forked from [safijari/steam-deck-battery-tracker](https://github
 
 ![Example](example.png)
 
-## Installation
+## Quick Installation
 
 Run the following in terminal:
 
@@ -19,6 +19,16 @@ curl -L https://raw.githubusercontent.com/DeckFilter/steam-deck-battery-tracker/
 ```
 
 This installs the latest release and restarts Decky automatically.
+
+## Manual installation in Decky
+
+1. Proceed to **Decky Settings** &rarr; **General**.
+2. Enable **Developer Mode**.
+3. Then go to newly appeared **Developer** tab &rarr; **Install Plugin from ZIP File** and click **Browse**. Or you can try directly installing from via link by entering it to **Install Plugin from URL** text field.
+4. Select the ZIP archive or enter following link: [https://github.com/DeckFilter/steam-deck-battery-tracker/releases/latest/download/steam-deck-battery-tracker.zip](https://github.com/DeckFilter/steam-deck-battery-tracker/releases/latest/download/steam-deck-battery-tracker.zip).
+5. After installing go to **Plugins**.
+6. Select **HLTB for Deck** settings and then click **Reload**.
+7. **HLTB for Deck** plugin should change its version to latest one, indicating successful installation.
 
 ## Tested devices:
 

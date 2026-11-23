@@ -1,6 +1,6 @@
 {
   "name": "Battery Tracker",
-  "author": "DeckFilter, Jariullah Safi",
+  "author": "DeckFilter",
   "flags": ["_root"],
   "api_version": 1,
   "publish": {

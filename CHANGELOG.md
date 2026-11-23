@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.3.4] - 2026-11-23
+
+
+### Fixes
+
+- Use 10% intervals in the battery chart by @felixhirschfeld
+- Match chart time label by @felixhirschfeld
+
+
+
+### Documentation
+
+- Update author by @felixhirschfeld
+
+
+
+### Maintenance
+
+- Add me as author by @felixhirschfeld
+
+
 ## [0.3.3] - 2026-11-03
 
 
